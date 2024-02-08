@@ -1,0 +1,83 @@
+[
+    {
+        "id": "1a7cf42ebd65ceae",
+        "type": "subflow",
+        "name": "Subflow 2",
+        "info": "",
+        "in": [],
+        "out": []
+    },
+    {
+        "id": "cb0d4cb3b916a677",
+        "type": "function",
+        "z": "1a7cf42ebd65ceae",
+        "name": "OEE1",
+        "func": "\nvar now = new Date();\nvar date = now.toLocaleDateString(\"de\");\nvar slot3 = \"1\";\nvar shift = \"A\";\nvar ct = 11;\n\nlet q1 = global.get(\"model\");\nlet ppro = global.get(\"production\");\nlet dt = global.get(\"DT\");\nlet reject = global.get(\"reject\");\nlet ctime = global.get(\"ctime\");\n\n\nvar target = ctime / ct;\nvar targett = parseFloat(target.toFixed(0));\nvar at = ctime - dt;\n\nvar a = at / ctime;\nvar aa = parseFloat(a.toFixed(4)); // Limit 'a' to 2 decimal places\n\nvar p = (ct * (ppro + reject)) / at;\nvar pp = parseFloat(p.toFixed(4)); // Limit 'p' to 2 decimal places\n\nvar q = ppro / (ppro + reject);\nvar qq = parseFloat(q.toFixed(4)); // Limit 'q' to 2 decimal places\n\nvar oee_o = (aa * pp * qq) * 100;\nvar oee = parseFloat(oee_o.toFixed(4));\n\n\nmsg.topic = \"INSERT INTO`da9`.`oee`(`date`,`slot`,`shift`,`model`,`production`,`target`,`downtime`,`a`, `p`,`q`,`oee`,`reject`)VALUES( '\" + date + \"','\" + slot3 + \"','\" + shift + \"','\" + q1 + \"','\" + ppro + \"','\" + targett + \"','\" + dt + \"','\" + aa + \"','\" + pp + \"','\" + qq + \"','\" + oee + \"','\" + reject + \"');\"\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 100,
+        "wires": [
+            [
+                "8828f1560fd13feb"
+            ]
+        ]
+    },
+    {
+        "id": "8828f1560fd13feb",
+        "type": "debug",
+        "z": "1a7cf42ebd65ceae",
+        "name": "debug 19",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 560,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "70c9f9a4e1d4c23c",
+        "type": "inject",
+        "z": "1a7cf42ebd65ceae",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "6",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 190,
+        "y": 80,
+        "wires": [
+            [
+                "cb0d4cb3b916a677"
+            ]
+        ]
+    },
+    {
+        "id": "e19fd5e87134e67a",
+        "type": "subflow:1a7cf42ebd65ceae",
+        "z": "8479bc83240c5f25",
+        "name": "",
+        "x": 720,
+        "y": 60,
+        "wires": []
+    }
+]
